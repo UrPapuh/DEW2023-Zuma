@@ -1,13 +1,13 @@
 // Parametres
-const numColors = 3;
+const numColors = 1;
 const initialCells = 20;
-const maxCells = 20;
+const maxCells = 21;
 const spawnTime = 2; // seg
 
-const timer = document.getElementById('timer');
-const interval = setInterval(update, 1000); // Contador
+// Variables
 const box = document.getElementById('box'); // Recuadro
-
+const timer = document.getElementById('timer'); // Contador
+let interval = setInterval(update, 1000);
 
 // Initialize timer
 timer.textContent = spawnTime;
@@ -26,16 +26,17 @@ for (let i = 0; i < initialCells; i++) {
   add();  
 }
 
-
 // Functions
 function update() {
-  if (timer.textContent <= 3) timer.className = 'red'; // time < 2
+  if (timer.textContent <= 3) timer.classList.add("red"); // time < 2
   if (timer.textContent == '0') {
     timer.textContent = spawnTime;
     timer.classList.remove("red");
+    add();
   } else {
     timer.textContent--;
   }
+  results();
 }
 
 function add(){
@@ -51,5 +52,40 @@ function random(max) {
 }
 
 function remove(event) {
-  event.target.remove();
+  const target = event.target;
+  const elements = [target];
+  // Previous
+  let element = target.previousElementSibling;
+  while (element && element.style.backgroundColor == target.style.backgroundColor) {
+    elements.push(element)
+    element = element.previousElementSibling;
+  }
+  // Next
+  element = target.nextElementSibling;
+  while (element && element.style.backgroundColor == target.style.backgroundColor) {
+    elements.push(element)
+    element = element.nextElementSibling;
+  }
+  // Remove
+  if (elements.length >= 3) {
+    elements.forEach(element => {
+      element.remove();
+    });
+  }
+}
+
+function results() {
+  const cells = document.getElementsByClassName('cell');
+  if (cells.length == 0 || cells.length >= maxCells) {
+    // Clear time
+    timer.textContent = '0';
+    clearInterval(interval);
+    interval = null;
+    // View results
+    if (cells.length == 0) { // WIN
+      document.write('WIN');
+    } else { // GAME OVER
+      document.write('GAME OVER');
+    }
+  }
 }
