@@ -1,7 +1,7 @@
 // Parametres
-const numColors = 1;
-const initialCells = 20;
-const maxCells = 21;
+const numColors = 2;
+const initialCells = 10;
+const maxCells = 20;
 const spawnTime = 2; // seg
 
 // Variables
@@ -15,7 +15,7 @@ timer.textContent = spawnTime;
 // Generate colors
 const colors = [];
 for (let i = 0; i < numColors; i++) {
-  let color = random(0xFFFFFF).toString(16).padStart(6, '0');;
+  let color = random(0xFFFFFF).toString(16).padStart(6, '0');
   console.log(color);
   colors.push(`#${color}`);
   //`rgb(${random256()},${random256()},${random256()})`
@@ -43,7 +43,13 @@ function add(){
   const cell = document.createElement('div');
   cell.classList.add('cell');
   cell.style.backgroundColor = colors[random(colors.length)];
-  cell.addEventListener('click', remove);
+  cell.addEventListener('mouseup', (event) => {
+    if (event.ctrlKey) {
+      turn(event);
+    } else {
+      remove(event);
+    }
+  });
   box.append(cell);
 }
 
@@ -74,6 +80,12 @@ function remove(event) {
   }
 }
 
+function turn(event) {
+  const target = event.target;
+  const previous = target.nextElementSibling;
+  if (previous) previous.after(target);
+}
+
 function results() {
   const cells = document.getElementsByClassName('cell');
   if (cells.length == 0 || cells.length >= maxCells) {
@@ -83,9 +95,9 @@ function results() {
     interval = null;
     // View results
     if (cells.length == 0) { // WIN
-      document.write('WIN');
+      alert('WIN');
     } else { // GAME OVER
-      document.write('GAME OVER');
+      alert('GAME OVER');
     }
   }
 }
